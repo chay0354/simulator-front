@@ -59,9 +59,13 @@ interface AdminClientProps {
 }
 
 export function AdminClient({ initialSessions }: AdminClientProps) {
-  const [sessions, setSessions] = useState<AdminSessionRow[]>(initialSessions);
+  const [sessions, setSessions] = useState<AdminSessionRow[]>(() => initialSessions ?? []);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadSessions = useCallback(() => {
     const url = `/api/admin/sessions?t=${Date.now()}`;
@@ -133,8 +137,8 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
                   return (
                     <Fragment key={row.id}>
                       <tr className="border-b border-white/5 hover:bg-white/5">
-                        <td className="p-3 text-slate-300 text-sm">
-                          {new Date(row.created_at).toLocaleString("he-IL")}
+                        <td className="p-3 text-slate-300 text-sm" suppressHydrationWarning>
+                          {mounted ? new Date(row.created_at).toLocaleString("he-IL") : String(row.created_at).slice(0, 16)}
                         </td>
                         <td className="p-3">
                           <span className="text-amber-300 font-medium">מסך {row.step_reached}</span>
@@ -166,12 +170,14 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
                         <tr className="bg-white/5">
                           <td colSpan={6} className="p-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                              {Object.entries(fd).map(([key, value]) => (
-                                <div key={key} className="flex flex-col gap-0.5">
-                                  <span className="text-slate-500">{FORM_LABELS[key] ?? key}</span>
-                                  <span className="text-slate-200">{formatFormValue(key, value)}</span>
-                                </div>
-                              ))}
+                              {Object.keys(fd)
+                                .sort()
+                                .map((key) => (
+                                  <div key={key} className="flex flex-col gap-0.5">
+                                    <span className="text-slate-500">{FORM_LABELS[key] ?? key}</span>
+                                    <span className="text-slate-200">{formatFormValue(key, fd[key])}</span>
+                                  </div>
+                                ))}
                             </div>
                           </td>
                         </tr>
