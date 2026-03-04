@@ -69,7 +69,10 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
 
   const loadSessions = useCallback(() => {
     const url = `/api/admin/sessions?t=${Date.now()}`;
-    return fetch(url, { cache: "no-store" })
+    return fetch(url, {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+    })
       .then(async (res) => {
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -124,10 +127,8 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
             <tbody>
               {sessions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500 space-y-2">
-                    <p>אין רשומות בטבלת evaluation_sessions (0 שורות).</p>
-                    <p className="text-sm">כדי שיופיעו נתונים: היכנס לסימולטור, מלא את הדף הראשון ולחץ «המשך».</p>
-                    <p className="text-xs text-slate-600">מתעדכן אוטומטית כל 15 שניות, או לחץ «רענן».</p>
+                  <td colSpan={6} className="p-8 text-center text-slate-500">
+                    —
                   </td>
                 </tr>
               ) : (

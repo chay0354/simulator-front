@@ -1,3 +1,4 @@
+import { unstable_noStore } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 
 export interface AdminSessionRow {
@@ -16,6 +17,7 @@ export interface AdminSessionRow {
  * Use this in the admin page so data is loaded on the server with the same env as the API.
  */
 export async function getAdminSessions(): Promise<AdminSessionRow[]> {
+  unstable_noStore();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) {
