@@ -100,10 +100,7 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
     <main className="min-h-screen bg-slate-900 text-white p-6 sm:p-8" dir="rtl">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100">ניהול משתמשים – סימולטור</h1>
-            <p className="text-slate-400 text-sm mt-1">טבלת evaluation_sessions ({sessions.length} שורות)</p>
-          </div>
+          <h1 className="text-2xl font-bold text-slate-100">ניהול משתמשים – סימולטור</h1>
           <div className="flex gap-3">
             <button
               type="button"
@@ -126,16 +123,15 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
         )}
 
         <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/5">
-          <div className="px-4 py-2 border-b border-white/10 text-slate-400 text-sm font-mono">evaluation_sessions</div>
-          <table className="w-full text-right">
+          <table className="w-full text-right" style={{ minWidth: "720px" }}>
             <thead>
               <tr className="border-b border-white/10 text-slate-300 text-sm">
-                <th className="p-3 font-medium">תאריך</th>
-                <th className="p-3 font-medium">מסך שהגיע</th>
-                <th className="p-3 font-medium">הושלם</th>
-                <th className="p-3 font-medium">עשירון</th>
-                <th className="p-3 font-medium">שם / אימייל</th>
-                <th className="p-3 font-medium w-20"></th>
+                <th className="p-3 font-medium text-right min-w-[130px]">תאריך</th>
+                <th className="p-3 font-medium text-right min-w-[90px]">מסך שהגיע</th>
+                <th className="p-3 font-medium text-right min-w-[60px]">הושלם</th>
+                <th className="p-3 font-medium text-right min-w-[80px]">עשירון</th>
+                <th className="p-3 font-medium text-right min-w-[160px]">שם / אימייל</th>
+                <th className="p-3 font-medium text-right min-w-[70px]">פרטים</th>
               </tr>
             </thead>
             <tbody>
