@@ -17,7 +17,8 @@ export async function GET() {
     .schema("public")
     .from("evaluation_sessions")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(2000);
   if (error) {
     console.error("[admin/sessions] Supabase error:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });

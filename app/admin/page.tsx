@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import { getAdminSessions } from "@/lib/admin-sessions";
 import { AdminClient } from "./AdminClient";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Admin page: load evaluation_sessions on the server so the table always
- * gets data from Supabase. Wrapped in Suspense to avoid hydration errors
- * (React #418/#423/#425) from spreading to the root.
+ * gets data from Supabase. Wrapped in Suspense to avoid hydration errors.
  */
 export default async function AdminPage() {
   const initialSessions = await getAdminSessions();

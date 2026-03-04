@@ -25,7 +25,8 @@ export async function getAdminSessions(): Promise<AdminSessionRow[]> {
   const { data, error } = await supabase
     .from("evaluation_sessions")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(2000);
   if (error) {
     console.error("[admin getAdminSessions]", error.message);
     return [];

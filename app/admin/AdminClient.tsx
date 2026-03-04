@@ -131,11 +131,12 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
                   </td>
                 </tr>
               ) : (
-                sessions.map((row) => {
+                sessions.map((row, index) => {
                   const fd = (row.form_data || {}) as Record<string, unknown>;
                   const isExpanded = expandedId === row.id;
+                  const rowKey = row.id || `row-${index}`;
                   return (
-                    <Fragment key={row.id}>
+                    <Fragment key={rowKey}>
                       <tr className="border-b border-white/5 hover:bg-white/5">
                         <td className="p-3 text-slate-300 text-sm" suppressHydrationWarning>
                           {mounted ? new Date(row.created_at).toLocaleString("he-IL") : String(row.created_at).slice(0, 16)}
