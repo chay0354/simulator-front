@@ -60,7 +60,6 @@ interface AdminClientProps {
 
 export function AdminClient({ initialSessions }: AdminClientProps) {
   const [sessions, setSessions] = useState<AdminSessionRow[]>(initialSessions);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -90,30 +89,14 @@ export function AdminClient({ initialSessions }: AdminClientProps) {
     return () => window.removeEventListener("focus", onFocus);
   }, [loadSessions]);
 
-  const onRefresh = () => {
-    setLoading(true);
-    setError(null);
-    loadSessions().finally(() => setLoading(false));
-  };
-
   return (
     <main className="min-h-screen bg-slate-900 text-white p-6 sm:p-8" dir="rtl">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
           <h1 className="text-2xl font-bold text-slate-100">ניהול משתמשים – סימולטור</h1>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onRefresh}
-              disabled={loading}
-              className="text-sky-400 hover:text-sky-300 text-sm border border-sky-400/50 px-3 py-1 rounded disabled:opacity-50"
-            >
-              {loading ? "…" : "רענן"}
-            </button>
-            <Link href="/" className="text-sky-400 hover:text-sky-300 text-sm">
-              ← חזרה לסימולטור
-            </Link>
-          </div>
+          <Link href="/" className="text-sky-400 hover:text-sky-300 text-sm">
+            ← חזרה לסימולטור
+          </Link>
         </div>
 
         {error && (
