@@ -64,14 +64,14 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
         >
           <defs>
             <linearGradient id="gauge-track" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#0ea5e9" />
-              <stop offset="33%" stopColor="#22d3ee" />
-              <stop offset="66%" stopColor="#a3e635" />
-              <stop offset="100%" stopColor="#facc15" />
+              <stop offset="0%" stopColor="#7c3aed" />
+              <stop offset="40%" stopColor="#a78bfa" />
+              <stop offset="70%" stopColor="#c084fc" />
+              <stop offset="100%" stopColor="#f472b6" />
             </linearGradient>
             <linearGradient id="gauge-glow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+              <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#a78bfa" stopOpacity="0" />
             </linearGradient>
             <filter id="needle-shadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#0f172a" floodOpacity="0.8" />
@@ -203,7 +203,7 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
         </svg>
       </div>
       {!compact && (
-        <p className="text-center text-sky-200 font-semibold mt-1 text-sm tracking-wide">
+        <p className="text-center text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold mt-1 text-sm tracking-wide">
           {labels[decile]}
         </p>
       )}

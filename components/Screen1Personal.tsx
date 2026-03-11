@@ -7,12 +7,12 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 },
+    transition: { staggerChildren: 0.06 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0 },
 };
 
@@ -30,10 +30,21 @@ export function Screen1Personal({
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-bold text-sky-200 mb-6">פרטים אישיים</h2>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-3">
+          ברוך הבא לסימולטור משפחות
+        </h2>
+        <div className="rounded-2xl border-2 border-violet-500/20 bg-violet-500/5 px-4 py-3.5">
+          <p className="text-slate-300 text-sm leading-relaxed">
+            נתוני הסימולטור מבוססים על <span className="text-violet-200 font-medium">מידע אמיתי</span> ומושווים לדאטה של{" "}
+            <span className="text-fuchsia-200 font-medium">ברק פיננסים</span> ומקורות נוספים. תקבל הערכה לאיזה{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold">עשירון משקי</span> אתה שייך.
+          </p>
+        </div>
+      </div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">זכר / נקבה</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">זכר / נקבה</label>
         <div className="flex gap-3">
           {[
             { value: "male", label: "זכר" },
@@ -43,11 +54,7 @@ export function Screen1Personal({
               key={opt.value}
               type="button"
               onClick={() => update({ gender: opt.value })}
-              className={`flex-1 py-3 rounded-xl border transition ${
-                formData.gender === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
+              className={`choice-card flex-1 ${formData.gender === opt.value ? "selected" : ""}`}
             >
               {opt.label}
             </button>
@@ -56,7 +63,26 @@ export function Screen1Personal({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">שם מלא</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">שכיר / עצמאי</label>
+        <div className="flex gap-3">
+          {[
+            { value: "employee", label: "שכיר" },
+            { value: "self", label: "עצמאי" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => update({ employment: opt.value })}
+              className={`choice-card flex-1 ${formData.employment === opt.value ? "selected" : ""}`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">שם מלא</label>
         <input
           type="text"
           value={formData.full_name}
@@ -67,44 +93,7 @@ export function Screen1Personal({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">גיל</label>
-        <input
-          type="number"
-          min={18}
-          max={120}
-          value={formData.age}
-          onChange={(e) => update({ age: e.target.value })}
-          className="input-glass"
-          placeholder="גיל"
-        />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">מקום מגורים</label>
-        <input
-          type="text"
-          value={formData.residence}
-          onChange={(e) => update({ residence: e.target.value })}
-          className="input-glass"
-          placeholder="עיר / יישוב"
-        />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">מספר נפשות בבית</label>
-        <input
-          type="number"
-          min={1}
-          max={20}
-          value={formData.household_size}
-          onChange={(e) => update({ household_size: e.target.value })}
-          className="input-glass"
-          placeholder="כמות"
-        />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">טלפון</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">טלפון</label>
         <input
           type="tel"
           value={formData.phone}
@@ -112,17 +101,7 @@ export function Screen1Personal({
           className="input-glass"
           placeholder="מס׳ טלפון"
         />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">אימייל</label>
-        <input
-          type="email"
-          value={formData.email}
-          onChange={(e) => update({ email: e.target.value })}
-          className="input-glass"
-          placeholder="כתובת אימייל"
-        />
+        <p className="text-slate-500 text-xs mt-1.5">* התוצאות ישלחו לטלפון – שימלאו את המספר הנכון.</p>
       </motion.div>
     </motion.div>
   );

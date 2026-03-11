@@ -5,34 +5,51 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Screen1Personal } from "@/components/Screen1Personal";
 import { Screen2Capital } from "@/components/Screen2Capital";
 import { Screen3Family } from "@/components/Screen3Family";
+import { Screen4Insurance } from "@/components/Screen4Insurance";
 import { DecileMeter } from "@/components/DecileMeter";
 import { ResultsView } from "@/components/ResultsView";
 import { calculateDecile } from "@/lib/decile";
 import type { FormState } from "@/lib/types";
 
-const totalSteps = 3;
+const totalSteps = 5;
 const SESSION_STORAGE_KEY = "evaluation_session_id";
+
+const initialFormState: FormState = {
+  gender: "",
+  employment: "",
+  full_name: "",
+  phone: "",
+  age: "",
+  age_group: "",
+  residence: "",
+  household_size: "",
+  family_income: "",
+  own_capital: "",
+  email: "",
+  property_status: "",
+  stock_market: "",
+  investments_abroad: undefined,
+  investments_abroad_scope: "",
+  has_land: undefined,
+  has_deposits: undefined,
+  deposits_scope: "",
+  mortgage_pays: undefined,
+  mortgage_amount: "",
+  pension_optimization: "",
+  tax_consulting: undefined,
+  tax_consulting_when: "",
+  provident_withdrawals: undefined,
+  provident_when: "",
+  id_upload_skipped: undefined,
+  clearinghouse_skipped: undefined,
+  pension_checked: undefined,
+  mortgage_pct: "",
+  insurance_pct: "",
+};
 
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<FormState>({
-    gender: "",
-    full_name: "",
-    age: "",
-    residence: "",
-    household_size: "",
-    phone: "",
-    email: "",
-    employment: "",
-    family_income: "",
-    own_capital: "",
-    investments_abroad: undefined,
-    has_land: undefined,
-    property_status: "",
-    pension_checked: undefined,
-    mortgage_pct: "",
-    insurance_pct: "",
-  });
+  const [formData, setFormData] = useState<FormState>(initialFormState);
   const [showResults, setShowResults] = useState(false);
   const [decileResult, setDecileResult] = useState<{
     decile: number;
@@ -64,6 +81,48 @@ export default function Home() {
     return decile;
   })();
 
+  const saveAndGoToResults = async () => {
+    const result = calculateDecile({
+      family_income: formData.family_income || undefined,
+      own_capital: formData.own_capital || undefined,
+      property_status: formData.property_status || undefined,
+      household_size: formData.household_size || undefined,
+      age: formData.age || undefined,
+    });
+    const currentId = sessionIdRef.current ?? sessionId ?? (typeof window !== "undefined" ? sessionStorage.getItem(SESSION_STORAGE_KEY) : null);
+    const formDataForDb = Object.fromEntries(
+      Object.entries(formData).map(([k, v]) => [k, v === undefined ? null : v])
+    );
+    try {
+      const payload = {
+        sessionId: currentId || undefined,
+        step_reached: totalSteps,
+        form_data: formDataForDb,
+        completed: true,
+        decile: result.decile,
+        score: result.score,
+      };
+      const res = await fetch("/api/sessions/upsert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const json = await res.json().catch(() => ({}));
+        if (json.id && !currentId) {
+          sessionIdRef.current = json.id;
+          setSessionId(json.id);
+          if (typeof window !== "undefined") sessionStorage.setItem(SESSION_STORAGE_KEY, json.id);
+        }
+      }
+    } catch (_) {}
+    if (typeof window !== "undefined") sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    sessionIdRef.current = null;
+    setSessionId(null);
+    setDecileResult(result);
+    setShowResults(true);
+  };
+
   const goNext = async () => {
     if (step < totalSteps) {
       const nextStep = step + 1;
@@ -86,7 +145,6 @@ export default function Home() {
         const json = await res.json().catch(() => ({}));
         if (!res.ok) {
           const msg = (json as { error?: string }).error || res.statusText || "Save failed";
-          console.error("[sessions/upsert] failed:", res.status, json);
           setSaveError(msg);
           return;
         }
@@ -96,47 +154,16 @@ export default function Home() {
           setSessionId(newId);
           if (typeof window !== "undefined") sessionStorage.setItem(SESSION_STORAGE_KEY, newId);
         }
+        if (nextStep === totalSteps) {
+          await saveAndGoToResults();
+          return;
+        }
         setStep(nextStep);
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "Network or server error";
-        setSaveError(msg);
+        setSaveError(e instanceof Error ? e.message : "Network error");
       }
     } else {
-      const result = calculateDecile({
-        family_income: formData.family_income || undefined,
-        own_capital: formData.own_capital || undefined,
-        property_status: formData.property_status || undefined,
-        household_size: formData.household_size || undefined,
-        age: formData.age || undefined,
-      });
-      const currentId = sessionIdRef.current ?? sessionId ?? (typeof window !== "undefined" ? sessionStorage.getItem(SESSION_STORAGE_KEY) : null);
-      const formDataForDb = Object.fromEntries(
-        Object.entries(formData).map(([k, v]) => [k, v === undefined ? null : v])
-      );
-      const completePayload: { sessionId?: string; step_reached: number; form_data: Record<string, unknown>; completed: true; decile: number; score: number } = {
-        step_reached: 3,
-        form_data: formDataForDb,
-        completed: true,
-        decile: result.decile,
-        score: result.score,
-      };
-      if (currentId) completePayload.sessionId = currentId;
-      try {
-        const res = await fetch("/api/sessions/upsert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(completePayload),
-        });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          console.error("[sessions/upsert] complete failed:", res.status, json);
-        }
-      } catch (_) {}
-      if (typeof window !== "undefined") sessionStorage.removeItem(SESSION_STORAGE_KEY);
-      sessionIdRef.current = null;
-      setSessionId(null);
-      setDecileResult(result);
-      setShowResults(true);
+      await saveAndGoToResults();
     }
   };
 
@@ -147,34 +174,40 @@ export default function Home() {
 
   const canProceed = () => {
     if (step === 1) {
-      return (
-        formData.gender &&
-        formData.full_name?.trim() &&
-        formData.age?.trim() &&
-        formData.residence?.trim() &&
-        formData.household_size?.trim() &&
-        formData.phone?.trim() &&
-        formData.email?.trim()
-      );
+      return Boolean(formData.gender && formData.employment && formData.full_name?.trim() && formData.phone?.trim());
     }
     if (step === 2) {
-      return (
-        formData.employment &&
-        formData.family_income &&
-        formData.own_capital &&
-        formData.investments_abroad !== undefined &&
-        formData.has_land !== undefined
+      return Boolean(
+        formData.age?.trim() &&
+          formData.residence?.trim() &&
+          formData.household_size?.trim() &&
+          formData.family_income &&
+          formData.own_capital
       );
     }
     if (step === 3) {
-      return (
+      const base =
         formData.property_status &&
-        formData.pension_checked !== undefined &&
-        formData.mortgage_pct !== undefined &&
-        formData.mortgage_pct !== "" &&
-        formData.insurance_pct !== undefined &&
-        formData.insurance_pct !== ""
-      );
+        formData.stock_market &&
+        formData.investments_abroad !== undefined &&
+        formData.has_land !== undefined &&
+        formData.has_deposits !== undefined;
+      if (!base) return false;
+      if (formData.investments_abroad === true && !formData.investments_abroad_scope) return false;
+      if (formData.has_deposits === true && !formData.deposits_scope) return false;
+      return true;
+    }
+    if (step === 4) {
+      const base =
+        formData.mortgage_pays !== undefined &&
+        formData.pension_optimization &&
+        formData.tax_consulting !== undefined &&
+        formData.provident_withdrawals !== undefined;
+      if (!base) return false;
+      if (formData.mortgage_pays === true && !formData.mortgage_amount) return false;
+      if (formData.tax_consulting === true && !formData.tax_consulting_when) return false;
+      if (formData.provident_withdrawals === true && !formData.provident_when) return false;
+      return true;
     }
     return false;
   };
@@ -182,56 +215,62 @@ export default function Home() {
   return (
     <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-l from-sky-300 via-cyan-200 to-amber-200 bg-clip-text text-transparent">
-            סימולטור הערכת מצב פיננסי
+          <span className="text-4xl sm:text-5xl mb-3 block animate-float" role="img" aria-hidden>🏠</span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-violet-300 via-fuchsia-200 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">
+            סימולטור משפחות
           </h1>
           <p className="text-slate-400 mt-2 text-sm sm:text-base">
-            ענו על השאלות וקבלו הערכה באיזה עשירון אתם
+            בואו נגלה ביחד באיזה עשירון אתם – כמה שאלות קצרות וזהו ✨
           </p>
         </motion.header>
 
-        {/* Progress & Decile meter (not on results) */}
         {!showResults && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-8"
           >
-            <div className="flex justify-between text-sm text-slate-400 mb-2">
-              <span>מסך {step} מתוך {totalSteps}</span>
+            <div className="flex justify-between items-center gap-2 mb-3">
+              <span className="text-slate-400 text-sm">התקדמות</span>
               {currentDecile != null && (
-                <span className="text-sky-300">הערכה נוכחית: עשירון {currentDecile}</span>
+                <span className="text-violet-300 font-medium text-sm bg-violet-500/20 px-3 py-1 rounded-full">
+                  הערכה: עשירון {currentDecile}
+                </span>
               )}
             </div>
-            <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-l from-sky-500 to-cyan-400 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${(step / totalSteps) * 100}%` }}
-                transition={{ duration: 0.4 }}
-              />
+            <div className="flex gap-2 justify-center mb-2">
+              {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
+                <motion.div
+                  key={s}
+                  className={`h-3 flex-1 max-w-[56px] rounded-full transition-all duration-300 ${
+                    s <= step ? "bg-gradient-to-l from-violet-500 to-fuchsia-400 shadow-lg shadow-violet-500/30" : "bg-white/15"
+                  }`}
+                  initial={false}
+                  animate={{
+                    scale: s === step ? 1.08 : 1,
+                    opacity: s <= step ? 1 : 0.6,
+                  }}
+                />
+              ))}
             </div>
-            {currentDecile != null && (
-              <DecileMeter decile={currentDecile} compact />
-            )}
+            <p className="text-center text-slate-500 text-xs">שלב {step} מתוך {totalSteps}</p>
+            {currentDecile != null && <DecileMeter decile={currentDecile} compact />}
           </motion.div>
         )}
 
-        {/* Form screens */}
         <AnimatePresence mode="wait">
           {showResults && decileResult ? (
             <motion.div
               key="results"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ type: "spring", damping: 25 }}
             >
               <ResultsView
                 formData={formData}
@@ -245,41 +284,46 @@ export default function Home() {
           ) : (
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-              className="glass rounded-3xl p-6 sm:p-8 shadow-2xl"
+              exit={{ opacity: 0, x: -24 }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="glass p-6 sm:p-8"
             >
-              {step === 1 && (
-                <Screen1Personal formData={formData} update={update} />
-              )}
-              {step === 2 && (
-                <Screen2Capital formData={formData} update={update} />
-              )}
-              {step === 3 && (
-                <Screen3Family formData={formData} update={update} />
-              )}
+              {step === 1 && <Screen1Personal formData={formData} update={update} />}
+              {step === 2 && <Screen2Capital formData={formData} update={update} />}
+              {step === 3 && <Screen3Family formData={formData} update={update} />}
+              {step === 4 && <Screen4Insurance formData={formData} update={update} />}
 
-              <div className="flex gap-3 mt-8 flex-row-reverse">
+              <div className="flex flex-col gap-4 mt-8">
                 {saveError && (
-                  <div className="rounded-lg bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-2 text-sm">
+                  <div className="rounded-2xl bg-red-500/20 border-2 border-red-500/40 text-red-200 px-4 py-2 text-sm">
                     שמירה נכשלה: {saveError}
                   </div>
                 )}
+                <div className="flex gap-3 flex-row-reverse flex-wrap">
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    disabled={!canProceed()}
+                    className="btn-primary"
+                  >
+                    {step >= totalSteps - 1 ? "🎉 סיום וצפייה בתוצאה" : "הבא ←"}
+                  </button>
+                  {step > 1 && (
+                    <button type="button" onClick={goBack} className="btn-secondary">
+                      חזרה →
+                    </button>
+                  )}
+                </div>
                 <button
                   type="button"
-                  onClick={goNext}
-                  disabled={!canProceed()}
-                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={saveAndGoToResults}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-violet-500/25 bg-violet-500/5 px-4 py-2.5 text-sm font-medium text-violet-200 transition-all duration-200 hover:border-violet-400/40 hover:bg-violet-500/15 hover:text-violet-100"
                 >
-                  {step === totalSteps ? "סיום וצפייה בתוצאה" : "המשך"}
+                  <span aria-hidden>📄</span>
+                  רוצה כבר דוח
                 </button>
-                {step > 1 && (
-                  <button type="button" onClick={goBack} className="btn-secondary">
-                    חזרה
-                  </button>
-                )}
               </div>
             </motion.div>
           )}

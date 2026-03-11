@@ -8,6 +8,7 @@ const FORM_LABELS: Record<string, string> = {
   gender: "מין",
   full_name: "שם מלא",
   age: "גיל",
+  age_group: "קבוצת גיל",
   residence: "מקום מגורים",
   household_size: "נפשות בבית",
   phone: "טלפון",
@@ -15,11 +16,24 @@ const FORM_LABELS: Record<string, string> = {
   employment: "שכיר/עצמאי",
   family_income: "הכנסה משפחתית",
   own_capital: "הון נזיל",
-  investments_abroad: "השקעות בחו\"ל",
-  has_land: "קרקעות",
   property_status: "דיור",
-  pension_checked: "בדק פנסיה",
+  stock_market: "שוק הון",
+  investments_abroad: "השקעות בחו\"ל",
+  investments_abroad_scope: "היקף השקעות בחו\"ל",
+  has_land: "קרקעות",
+  has_deposits: "פיקדון/קרן כספית",
+  deposits_scope: "היקף פיקדונות",
+  mortgage_pays: "משלם משכנתא",
+  mortgage_amount: "גובה משכנתא",
   mortgage_pct: "משכנתא %",
+  pension_optimization: "טיוב פנסיה",
+  pension_checked: "בדק פנסיה",
+  tax_consulting: "ייעוץ מס",
+  tax_consulting_when: "מתי ייעוץ מס",
+  provident_withdrawals: "מינופים מקופות גמל",
+  provident_when: "מתי מינופים גמל",
+  id_upload_skipped: "דילג ת\"ז",
+  clearinghouse_skipped: "דילג מסלקה",
   insurance_pct: "ביטוח %",
 };
 const INCOME_LABELS: Record<string, string> = {
@@ -47,6 +61,7 @@ function formatFormValue(key: string, value: unknown): string {
   if (key === "family_income") return INCOME_LABELS[value as string] ?? String(value);
   if (key === "own_capital") return CAPITAL_LABELS[value as string] ?? String(value);
   if (key === "property_status") return PROPERTY_LABELS[value as string] ?? String(value);
+  if (typeof value === "boolean") return value ? "כן" : "לא";
   if (key === "investments_abroad" || key === "has_land" || key === "pension_checked")
     return value ? "כן" : "לא";
   return String(value);

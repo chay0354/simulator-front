@@ -3,14 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --bg-gradient-start: #0f172a;
-  --bg-gradient-mid: #1e293b;
-  --bg-gradient-end: #0f172a;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --border-glow: rgba(56, 189, 248, 0.3);
-  --gold: #facc15;
-  --text-primary: #f8fafc;
-  --text-muted: #94a3b8;
+  --playful-bg-start: #1e1b4b;
+  --playful-bg-mid: #312e81;
+  --playful-bg-end: #1e3a5f;
+  --playful-card: rgba(255, 255, 255, 0.08);
+  --playful-border: rgba(255, 255, 255, 0.12);
+  --playful-accent: #a78bfa;
+  --playful-accent-warm: #f472b6;
+  --playful-success: #34d399;
+  --playful-gold: #fcd34d;
+  --playful-text: #f8fafc;
+  --playful-muted: #94a3b8;
 }
 
 html {
@@ -19,40 +22,116 @@ html {
 
 body {
   @apply antialiased;
-  background: linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0c4a6e 100%);
+  background: linear-gradient(165deg, #1e1b4b 0%, #312e81 35%, #1e3a5f 70%, #0f172a 100%);
   background-attachment: fixed;
   min-height: 100vh;
-  color: var(--text-primary);
+  color: var(--playful-text);
 }
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.15), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(14, 165, 233, 0.08), transparent),
-    radial-gradient(ellipse 50% 30% at 0% 80%, rgba(250, 204, 21, 0.06), transparent);
+  background-image:
+    radial-gradient(ellipse 100% 60% at 20% 0%, rgba(167, 139, 250, 0.2), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 90% 20%, rgba(244, 114, 182, 0.12), transparent 45%),
+    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(52, 211, 153, 0.08), transparent 40%);
   pointer-events: none;
   z-index: 0;
 }
 
-@layer utilities {
+@layer components {
   .glass {
-    @apply backdrop-blur-xl border border-white/10;
-    background: var(--card-bg);
+    @apply backdrop-blur-2xl border-2 rounded-3xl;
+    background: var(--playful-card);
+    border-color: var(--playful-border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
   }
+
   .input-glass {
-    @apply bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-right w-full focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400/50 transition;
+    @apply rounded-2xl px-4 py-3.5 text-right w-full transition-all duration-200;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 255, 255, 0.12);
   }
+  .input-glass:focus {
+    @apply outline-none;
+    border-color: var(--playful-accent);
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.25);
+  }
+  .input-glass::placeholder {
+    color: rgba(148, 163, 184, 0.6);
+  }
+
   .btn-primary {
-    @apply px-6 py-3 rounded-xl font-medium bg-gradient-to-l from-sky-500 to-cyan-400 text-slate-900 hover:from-sky-400 hover:to-cyan-300 transition shadow-lg shadow-sky-500/25;
+    @apply px-8 py-4 rounded-2xl font-bold text-slate-900 transition-all duration-200 hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 50%, #f472b6 100%);
+    box-shadow: 0 10px 30px -5px rgba(167, 139, 250, 0.4);
   }
+  .btn-primary:hover {
+    box-shadow: 0 20px 40px -10px rgba(167, 139, 250, 0.5);
+  }
+  .btn-primary:disabled {
+    @apply opacity-50 cursor-not-allowed hover:scale-100 active:scale-100;
+  }
+
   .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-medium border border-white/30 text-white hover:bg-white/10 transition;
+    @apply px-6 py-3 rounded-2xl font-medium border-2 transition-all duration-200 hover:scale-105 active:scale-95;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .choice-card {
+    @apply rounded-2xl border-2 py-4 px-5 text-right transition-all duration-200 cursor-pointer;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .choice-card:hover {
+    @apply scale-[1.02];
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(167, 139, 250, 0.3);
+    box-shadow: 0 8px 25px -5px rgba(167, 139, 250, 0.15);
+  }
+  .choice-card:active {
+    @apply scale-[0.98];
+  }
+  .choice-card.selected {
+    border-color: var(--playful-accent);
+    background: rgba(167, 139, 250, 0.15);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
   }
 }
 
-/* Decile meter track */
 .meter-track {
-  background: linear-gradient(to left, #0ea5e9 0%, #22d3ee 25%, #a3e635 50%, #facc15 75%, #f97316 100%);
+  background: linear-gradient(to left, #38bdf8 0%, #22d3ee 25%, #34d399 50%, #fcd34d 75%, #fb923c 100%);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes bounce-in {
+  0% { opacity: 0; transform: scale(0.85); }
+  60% { transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s ease-out forwards;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.4s ease-in-out;
 }

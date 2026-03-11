@@ -7,14 +7,21 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 },
+    transition: { staggerChildren: 0.06 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0 },
 };
+
+function useWording(gender: string) {
+  const isFemale = gender === "female";
+  return {
+    your: isFemale ? "שלך" : "שלך",
+  };
+}
 
 export function Screen2Capital({
   formData,
@@ -23,6 +30,8 @@ export function Screen2Capital({
   formData: FormState;
   update: (u: Partial<FormState>) => void;
 }) {
+  const wording = useWording(formData.gender);
+
   return (
     <motion.div
       variants={container}
@@ -30,36 +39,48 @@ export function Screen2Capital({
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-bold text-sky-200 mb-6">הון עצמי</h2>
+      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-6">
+        אפיון והון משפחתי
+      </h2>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          האם אתה שכיר / עצמאי?
-        </label>
-        <div className="flex gap-3">
-          {[
-            { value: "employee", label: "שכיר" },
-            { value: "self", label: "עצמאי" },
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => update({ employment: opt.value })}
-              className={`flex-1 py-3 rounded-xl border transition ${
-                formData.employment === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">גיל / קבוצת גיל</label>
+        <input
+          type="text"
+          value={formData.age}
+          onChange={(e) => update({ age: e.target.value })}
+          className="input-glass"
+          placeholder="גיל או קבוצת גיל (למשל 35 או 30–40)"
+        />
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          האם ההכנסה המשפחתית שלך:
+        <label className="block text-sm font-semibold text-slate-300 mb-2">מקום מגורים</label>
+        <input
+          type="text"
+          value={formData.residence}
+          onChange={(e) => update({ residence: e.target.value })}
+          className="input-glass"
+          placeholder="עיר / יישוב"
+        />
+      </motion.div>
+
+      <motion.div variants={item}>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">מספר נפשות בבית</label>
+        <input
+          type="number"
+          min={1}
+          max={20}
+          value={formData.household_size}
+          onChange={(e) => update({ household_size: e.target.value })}
+          className="input-glass"
+          placeholder="כמות"
+        />
+      </motion.div>
+
+      <motion.div variants={item}>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          האם ההכנסה המשפחתית {wording.your}:
         </label>
         <div className="space-y-2">
           {[
@@ -71,11 +92,7 @@ export function Screen2Capital({
               key={opt.value}
               type="button"
               onClick={() => update({ family_income: opt.value })}
-              className={`w-full py-3 rounded-xl border transition text-right px-4 ${
-                formData.family_income === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
+              className={`choice-card w-full ${formData.family_income === opt.value ? "selected" : ""}`}
             >
               {opt.label}
             </button>
@@ -84,8 +101,8 @@ export function Screen2Capital({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם הושקע?
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם מצאת לו ייעוד או טרם השקעת אותו? ברשותי הכנסה פנויה של:
         </label>
         <div className="space-y-2">
           {[
@@ -93,67 +110,13 @@ export function Screen2Capital({
             { value: "250_500", label: "בין 250,000–500,000" },
             { value: "over_500", label: "מעל 500,000" },
             { value: "over_1m", label: "מעל מיליון" },
-            { value: "over_5m", label: "מעל 5 מיליון" },
+            { value: "over_5m", label: "אני ממש עשיר – מעל 5 מיליון" },
           ].map((opt) => (
             <button
               key={opt.value}
               type="button"
               onClick={() => update({ own_capital: opt.value })}
-              className={`w-full py-3 rounded-xl border transition text-right px-4 ${
-                formData.own_capital === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          האם ברשותך השקעות מעבר לים?
-        </label>
-        <div className="flex gap-3">
-          {[
-            { value: true, label: "כן" },
-            { value: false, label: "לא" },
-          ].map((opt) => (
-            <button
-              key={String(opt.value)}
-              type="button"
-              onClick={() => update({ investments_abroad: opt.value })}
-              className={`flex-1 py-3 rounded-xl border transition ${
-                formData.investments_abroad === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div variants={item}>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          האם ברשותך קרקעות?
-        </label>
-        <div className="flex gap-3">
-          {[
-            { value: true, label: "כן" },
-            { value: false, label: "לא" },
-          ].map((opt) => (
-            <button
-              key={String(opt.value)}
-              type="button"
-              onClick={() => update({ has_land: opt.value })}
-              className={`flex-1 py-3 rounded-xl border transition ${
-                formData.has_land === opt.value
-                  ? "border-sky-400 bg-sky-500/20 text-sky-200"
-                  : "border-white/20 bg-white/5 text-slate-400 hover:border-white/30"
-              }`}
+              className={`choice-card w-full ${formData.own_capital === opt.value ? "selected" : ""}`}
             >
               {opt.label}
             </button>

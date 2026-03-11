@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "node -e \"const fs=require('fs'),path=require('path'); const cwd=process.cwd(); ['.next',path.join('node_modules','.cache')].forEach(dir=>{ const p=path.join(cwd,dir); if(fs.existsSync(p)){ fs.rmSync(p,{recursive:true}); console.log('Removed '+dir); } });\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
