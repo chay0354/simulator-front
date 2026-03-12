@@ -148,7 +148,7 @@ export function Screen3Family({ formData, update }: Screen3FamilyProps) {
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">
           <LabelWithTooltip
-            label="האם ברשותך פיקדון בנקרי או קרן כספית?"
+            label="האם ברשותך פיקדון בנקאי או קרן כספית?"
             tooltip='כסף בבנק או בקרן כספית שלא מושקע במניות או באג"ח.'
           />
         </label>
