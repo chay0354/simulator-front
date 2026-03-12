@@ -263,6 +263,44 @@ export default function Home() {
           </motion.div>
         )}
 
+        {!showResults && (
+          <div className="relative rounded-2xl overflow-hidden border border-violet-400/25 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/5 to-transparent px-5 py-4 shadow-inner mb-6">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-violet-400/60 to-fuchsia-400/40 rounded-r" aria-hidden />
+            <div className="flex gap-3">
+              <span className="shrink-0 w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg" aria-hidden>
+                📊
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-violet-300 uppercase tracking-wide mb-1.5">
+                  מבוסס על נתונים אמיתיים
+                </p>
+                <p className="text-slate-200 text-sm leading-relaxed">
+                  מושווה לדאטה של{" "}
+                  <span className="relative inline-block group">
+                    <span
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl bg-violet-800/95 text-white text-xs font-medium whitespace-nowrap shadow-lg border border-violet-500/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-10"
+                      role="tooltip"
+                    >
+                      ברק פיננסים היא בין חברות ההשקעות המובילות בישראל!
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-violet-800" aria-hidden />
+                    </span>
+                    <a
+                      href="https://www.barak-fin.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-fuchsia-200 font-semibold underline underline-offset-2 hover:text-fuchsia-100 transition-colors"
+                    >
+                      ברק פיננסים
+                    </a>
+                  </span>{" "}
+                  ומקורות נוספים. תקבל הערכה ל{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold">עשירון משקי</span> שלך.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <AnimatePresence mode="wait">
           {showResults && decileResult ? (
             <motion.div

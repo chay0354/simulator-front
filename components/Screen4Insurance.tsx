@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { FormState } from "@/lib/types";
+import { LabelWithTooltip } from "@/components/LabelWithTooltip";
+import type { FormState, FormUpdateFn } from "@/lib/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -22,13 +23,9 @@ const WHEN_OPTIONS = [
   { value: "help_me", label: "לא ביצעתי בכלל – אין לי מושג, תעזרו לי לגלות" },
 ];
 
-export function Screen4Insurance({
-  formData,
-  update,
-}: {
-  formData: FormState;
-  update: (u: Partial<FormState>) => void;
-}) {
+type Screen4InsuranceProps = { formData: FormState; update: FormUpdateFn };
+
+export function Screen4Insurance({ formData, update }: Screen4InsuranceProps) {
   return (
     <motion.div
       variants={container}
@@ -39,7 +36,12 @@ export function Screen4Insurance({
       <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-6">משכנתאות וביטוחים</h2>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם אתה משלם משכנתא?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם אתה משלם משכנתא?"
+            tooltip="החזר חודשי לבנק על הלוואה לרכישת דירה."
+          />
+        </label>
         <div className="flex gap-3">
           {[
             { value: true, label: "כן" },
@@ -75,7 +77,12 @@ export function Screen4Insurance({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם ביצעת טיוב לתיק ההשקעות הביטחוני והפנסיוני שלך?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם ביצעת טיוב לתיק ההשקעות הביטחוני והפנסיוני שלך?"
+            tooltip="בדיקה שהחיסכון הפנסיוני והביטוחים מתאימים לך ומנוהלים במחיר סביר."
+          />
+        </label>
         <div className="space-y-2">
           {[
             { value: "yes_last_year", label: "כן, בשנה האחרונה" },
@@ -98,7 +105,12 @@ export function Screen4Insurance({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם ביצעת ייעוץ מס / החזרי מס?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם ביצעת ייעוץ מס / החזרי מס?"
+            tooltip='פגישה עם יועץ או רו"ח להחזר מס או תכנון מס.'
+          />
+        </label>
         <div className="flex gap-3">
           {[
             { value: true, label: "כן" },
@@ -132,7 +144,12 @@ export function Screen4Insurance({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם ביצעת אי פעם מינופים פיננסיים מקופות הגמל שלך?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם ביצעת אי פעם מינופים פיננסיים מקופות הגמל שלך?"
+            tooltip="נטילת הלוואה כנגד הצבירה בקופת גמל (למשל לרכישת דירה)."
+          />
+        </label>
         <div className="flex gap-3">
           {[
             { value: true, label: "כן" },

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
 interface DecileMeterProps {
@@ -18,6 +19,19 @@ const labels: Record<number, string> = {
   8: "עשירון 8",
   9: "עשירון 9",
   10: "עשירון 10",
+};
+
+const decileTooltips: Record<number, string> = {
+  1: "עשירון 1 – 10% התחתון: משקי הבית עם ההכנסה והנכסים הנמוכים ביותר במדד.",
+  2: "עשירון 2 – בין 10% ל־20%: מצב פיננסי נמוך, מתחת לממוצע במשק.",
+  3: "עשירון 3 – בין 20% ל־30%: חלק מהשכבות החלשות במדד ההכנסה והנכסים.",
+  4: "עשירון 4 – בין 30% ל־40%: מתחת לממוצע, עם פוטנציאל לשיפור בתכנון נכון.",
+  5: "עשירון 5 – האמצע (40%–50%): ממוצע המשק – בערך חצי המשקי בית מעליך וחצי מתחתיך.",
+  6: "עשירון 6 – בין 50% ל־60%: מעט מעל הממוצע במדד ההכנסה והנכסים.",
+  7: "עשירון 7 – בין 60% ל־70%: מצב פיננסי טוב, מעל רוב משקי הבית.",
+  8: "עשירון 8 – בין 70% ל־80%: בין החזקים במשק בהכנסה ובנכסים.",
+  9: "עשירון 9 – בין 80% ל־90%: מצב פיננסי חזק, בעשירון העליון.",
+  10: "עשירון 10 – 10% העליון: משקי הבית עם ההכנסה והנכסים הגבוהים ביותר במדד.",
 };
 
 // Semicircle: 0° = left (decile 1), 180° = right (decile 10). We draw from right to left in RTL.
@@ -42,12 +56,27 @@ function polarToCartesian(cx: number, cy: number, r: number, deg: number) {
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
+const hitRadius = 16;
+
 export function DecileMeter({ decile, compact }: DecileMeterProps) {
   const angle = angleForDecile(decile);
-  const arcEnd = angle; // arc from 0 to angle (decile 1 to current decile)
+  const [hoveredDecile, setHoveredDecile] = useState<number | null>(null);
+  const touchDismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handlePointer = useCallback((d: number, show: boolean) => {
+    if (touchDismissRef.current) {
+      clearTimeout(touchDismissRef.current);
+      touchDismissRef.current = null;
+    }
+    setHoveredDecile(show ? d : null);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    touchDismissRef.current = setTimeout(() => setHoveredDecile(null), 2500);
+  }, []);
 
   return (
-    <div className={`mt-4 flex flex-col items-center ${compact ? "scale-90 origin-center" : ""}`}>
+    <div className={`relative mt-4 flex flex-col items-center ${compact ? "scale-90 origin-center" : ""}`}>
       <div
         className="relative rounded-b-full overflow-visible"
         style={{
@@ -137,7 +166,7 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
               />
             );
           })}
-          {/* Numbers along the arc */}
+          {/* Numbers along the arc – interactive with tooltips */}
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => {
             const a = angleForDecile(d);
             const rad = ((a - 180) * Math.PI) / 180;
@@ -145,17 +174,32 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
             const x = center + labelR * Math.cos(rad);
             const y = center + labelR * Math.sin(rad);
             return (
-              <text
+              <g
                 key={d}
-                x={x}
-                y={y}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="fill-slate-300 text-[10px] font-bold tabular-nums"
-                style={{ fontFamily: "var(--font-heebo), system-ui, sans-serif" }}
+                className="cursor-pointer"
+                onMouseEnter={() => handlePointer(d, true)}
+                onMouseLeave={() => handlePointer(d, false)}
+                onTouchStart={() => handlePointer(d, true)}
+                onTouchEnd={handleTouchEnd}
               >
-                {d}
-              </text>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={hitRadius}
+                  fill="transparent"
+                  className="touch-manipulation"
+                />
+                <text
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="fill-slate-300 text-[10px] font-bold tabular-nums pointer-events-none"
+                  style={{ fontFamily: "var(--font-heebo), system-ui, sans-serif" }}
+                >
+                  {d}
+                </text>
+              </g>
             );
           })}
           {/* Red zone (decile 9-10) like a tach */}
@@ -201,6 +245,18 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
           />
           <circle cx={center} cy={center} r={6} fill="rgba(248,250,252,0.2)" />
         </svg>
+        {/* Tooltip bubble below meter – centered, wider */}
+        {hoveredDecile != null && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[280px] max-w-[360px] shadow-lg border border-violet-500/30 z-20 pointer-events-none"
+            role="tooltip"
+          >
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-violet-800" aria-hidden />
+            {decileTooltips[hoveredDecile]}
+          </motion.div>
+        )}
       </div>
       {!compact && (
         <p className="text-center text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold mt-1 text-sm tracking-wide">

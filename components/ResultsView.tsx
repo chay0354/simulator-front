@@ -98,11 +98,11 @@ export function ResultsView({
 
       {/* Distribution over deciles (Bayesian result) */}
       {distribution && distribution.length === 10 && (
-        <div className="mt-6">
-          <h3 className="text-sm font-medium text-slate-400 mb-2 text-center">
+        <div className="mt-6 py-4">
+          <h3 className="text-sm font-medium text-slate-400 mb-3 text-center">
             התפלגות ההסתברות לעשירונים
           </h3>
-          <div className="flex gap-0.5 h-8 items-end justify-center" dir="ltr">
+          <div className="flex gap-0.5 items-end justify-center" dir="ltr" style={{ height: 120 }}>
             {distribution.map((p, i) => (
               <motion.div
                 key={i}
@@ -115,7 +115,7 @@ export function ResultsView({
               />
             ))}
           </div>
-          <div className="flex justify-between mt-1 text-[10px] text-slate-500" dir="ltr">
+          <div className="flex justify-between mt-2 text-xs text-slate-500" dir="ltr">
             <span>1</span>
             <span>10</span>
           </div>

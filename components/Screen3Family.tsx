@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { FormState } from "@/lib/types";
+import { LabelWithTooltip } from "@/components/LabelWithTooltip";
+import type { FormState, FormUpdateFn } from "@/lib/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -16,13 +17,9 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function Screen3Family({
-  formData,
-  update,
-}: {
-  formData: FormState;
-  update: (u: Partial<FormState>) => void;
-}) {
+type Screen3FamilyProps = { formData: FormState; update: FormUpdateFn };
+
+export function Screen3Family({ formData, update }: Screen3FamilyProps) {
   return (
     <motion.div
       variants={container}
@@ -65,7 +62,12 @@ export function Screen3Family({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם יש לך כסף שמושקע בשוק ההון?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם יש לך כסף שמושקע בשוק ההון?"
+            tooltip={'השקעות במניות, קרנות, אג"ח וכד\' בישראל או בחו"ל.'}
+          />
+        </label>
         <div className="flex gap-3 flex-wrap">
           {[
             { value: "under_half_m", label: "מתחת לחצי מיליון" },
@@ -84,7 +86,12 @@ export function Screen3Family({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם ברשותך השקעות מעבר לים?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם ברשותך השקעות מעבר לים?"
+            tooltip='נכסים פיננסיים שמנוהלים בחו"ל (חשבונות, קרנות).'
+          />
+        </label>
         <div className="flex gap-3">
           {[
             { value: true, label: "כן" },
@@ -139,7 +146,12 @@ export function Screen3Family({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-3">האם ברשותך פיקדון בנקרי או קרן כספית?</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          <LabelWithTooltip
+            label="האם ברשותך פיקדון בנקרי או קרן כספית?"
+            tooltip='כסף בבנק או בקרן כספית שלא מושקע במניות או באג"ח.'
+          />
+        </label>
         <div className="flex gap-3">
           {[
             { value: true, label: "כן" },

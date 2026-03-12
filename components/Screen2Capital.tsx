@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { FormState } from "@/lib/types";
+import { LabelWithTooltip } from "@/components/LabelWithTooltip";
+import type { FormState, FormUpdateFn } from "@/lib/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -16,6 +17,15 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+const TOOLTIP_HOUSEHOLD = "כמות האנשים שגרים איתך בבית (כולל ילדים).";
+const TOOLTIP_INCOME = "ההכנסה הנקייה של כל בני הבית יחד (משכורות, עסק, ריבית וכו') לפני מס.";
+const TOOLTIP_CAPITAL = 'כסף נזיל בפיקדונות או בקרן כספית שטרם הושקע במניות או נדל"ן.';
+
+type Screen2CapitalProps = {
+  formData: FormState;
+  update: FormUpdateFn;
+};
+
 function useWording(gender: string) {
   const isFemale = gender === "female";
   return {
@@ -23,13 +33,7 @@ function useWording(gender: string) {
   };
 }
 
-export function Screen2Capital({
-  formData,
-  update,
-}: {
-  formData: FormState;
-  update: (u: Partial<FormState>) => void;
-}) {
+export function Screen2Capital({ formData, update }: Screen2CapitalProps) {
   const wording = useWording(formData.gender);
 
   return (
@@ -66,7 +70,9 @@ export function Screen2Capital({
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-2">מספר נפשות בבית</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">
+          <LabelWithTooltip label="מספר נפשות בבית" tooltip={TOOLTIP_HOUSEHOLD} />
+        </label>
         <input
           type="number"
           min={1}
@@ -80,7 +86,10 @@ export function Screen2Capital({
 
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">
-          האם ההכנסה המשפחתית {wording.your}:
+          <LabelWithTooltip
+            label={"האם ההכנסה המשפחתית " + wording.your + ":"}
+            tooltip={TOOLTIP_INCOME}
+          />
         </label>
         <div className="space-y-2">
           {[
@@ -102,7 +111,10 @@ export function Screen2Capital({
 
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">
-          האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם מצאת לו ייעוד או טרם השקעת אותו? ברשותי הכנסה פנויה של:
+          <LabelWithTooltip
+            label="האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם מצאת לו ייעוד או טרם השקעת אותו? ברשותי הכנסה פנויה של:"
+            tooltip={TOOLTIP_CAPITAL}
+          />
         </label>
         <div className="space-y-2">
           {[

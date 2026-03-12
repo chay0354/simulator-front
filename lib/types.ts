@@ -1,3 +1,6 @@
+/** Used in screen components to avoid JSX parser confusion with Partial<FormState> in props */
+export type FormUpdateFn = (u: Partial<FormState>) => void;
+
 export interface FormState {
   // מסך 1
   gender: string;
