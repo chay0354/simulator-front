@@ -101,7 +101,6 @@ export function Screen1Personal({
           className="input-glass"
           placeholder="מס׳ טלפון"
         />
-        <p className="text-slate-500 text-xs mt-1.5">* התוצאות ישלחו לטלפון – שימלאו את המספר הנכון.</p>
       </motion.div>
     </motion.div>
   );
