@@ -30,6 +30,23 @@ export function Screen1Personal({ formData, update }: Screen1PersonalProps) {
         </h2>
       </div>
 
+      <motion.div
+        variants={item}
+        className="rounded-2xl border border-violet-400/30 bg-violet-500/10 px-4 py-3.5 flex gap-3 items-center"
+      >
+        <span className="shrink-0 w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg" aria-hidden>
+          ?
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-violet-200/95">
+            כדי לגלות באיזה <span className="font-semibold text-violet-200">עשירון משקי בית</span> אתה – המשך למלא את הפרטים בשלבים הבאים.
+          </p>
+          <p className="text-xs text-violet-300/70 mt-1">
+            ככל שתענה על יותר שאלות, נציג לך את העשירון המשוער שלך במדד.
+          </p>
+        </div>
+      </motion.div>
+
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">זכר / נקבה</label>
         <div className="flex gap-3">

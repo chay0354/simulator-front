@@ -235,14 +235,13 @@ export default function Home() {
             animate={{ opacity: 1 }}
             className="mb-8"
           >
-            <div className="flex justify-between items-center gap-2 mb-3">
-              <span className="text-slate-400 text-sm">התקדמות</span>
-              {currentDecile != null && (
+            {currentDecile != null && (
+              <div className="flex justify-end mb-3">
                 <span className="text-violet-300 font-medium text-sm bg-violet-500/20 px-3 py-1 rounded-full">
                   הערכה: עשירון {currentDecile}
                 </span>
-              )}
-            </div>
+              </div>
+            )}
             <div className="flex gap-2 justify-center mb-2">
               {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
                 <motion.div
@@ -259,7 +258,7 @@ export default function Home() {
               ))}
             </div>
             <p className="text-center text-slate-500 text-xs">שלב {step} מתוך {totalSteps}</p>
-            {currentDecile != null && <DecileMeter decile={currentDecile} compact />}
+            <DecileMeter decile={currentDecile ?? null} compact />
           </motion.div>
         )}
 
@@ -294,7 +293,17 @@ export default function Home() {
                     </a>
                   </span>{" "}
                   ומקורות נוספים. תקבל הערכה ל{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold">עשירון משקי</span> שלך.
+                  <span className="relative inline-block group">
+                    <span
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[260px] max-w-[320px] shadow-lg border border-violet-500/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-10"
+                      role="tooltip"
+                    >
+                      עשירון משקי בית מחלק את משקי הבית בישראל ל־10 קבוצות לפי הכנסה ונכסים – מעשירון 1 (הנמוך) עד עשירון 10 (הגבוה). כאן תקבל הערכה לאיזה עשירון אתה שייך.
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-violet-800" aria-hidden />
+                    </span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold cursor-help">עשירון משקי</span>
+                  </span>{" "}
+                  שלך.
                 </p>
               </div>
             </div>

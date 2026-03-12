@@ -4,7 +4,8 @@ import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
 interface DecileMeterProps {
-  decile: number;
+  /** When null, shows "mystery" state – user must continue to discover decile */
+  decile: number | null;
   compact?: boolean;
 }
 
@@ -59,7 +60,8 @@ function polarToCartesian(cx: number, cy: number, r: number, deg: number) {
 const hitRadius = 16;
 
 export function DecileMeter({ decile, compact }: DecileMeterProps) {
-  const angle = angleForDecile(decile);
+  const isMystery = decile == null;
+  const angle = isMystery ? 90 : angleForDecile(decile);
   const [hoveredDecile, setHoveredDecile] = useState<number | null>(null);
   const touchDismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -129,19 +131,21 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
             strokeLinecap="round"
             opacity={0.9}
           />
-          {/* Filled arc from 0 to current decile */}
-          <motion.path
-            d={describeArc(center, center, radius, 0, 180)}
-            fill="none"
-            stroke="url(#gauge-track)"
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeDasharray={radius * Math.PI}
-            initial={{ strokeDashoffset: radius * Math.PI }}
-            animate={{ strokeDashoffset: radius * Math.PI * (1 - decile / 10) }}
-            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ transform: "rotate(0deg)", transformOrigin: `${center}px ${center}px` }}
-          />
+          {/* Filled arc from 0 to current decile (hidden in mystery mode) */}
+          {!isMystery && (
+            <motion.path
+              d={describeArc(center, center, radius, 0, 180)}
+              fill="none"
+              stroke="url(#gauge-track)"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              strokeDasharray={radius * Math.PI}
+              initial={{ strokeDashoffset: radius * Math.PI }}
+              animate={{ strokeDashoffset: radius * Math.PI * (1 - decile / 10) }}
+              transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+              style={{ transform: "rotate(0deg)", transformOrigin: `${center}px ${center}px` }}
+            />
+          )}
           {/* Tick marks */}
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => {
             const a = angleForDecile(d);
@@ -210,31 +214,33 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
             strokeWidth={strokeWidth}
             strokeLinecap="round"
           />
-          {/* Needle */}
-          <g filter="url(#needle-shadow)">
-            <motion.line
-              x1={center}
-              y1={center}
-              x2={
-                center +
-                (radius - strokeWidth - 10) * Math.cos(((angle - 180) * Math.PI) / 180)
-              }
-              y2={
-                center +
-                (radius - strokeWidth - 10) * Math.sin(((angle - 180) * Math.PI) / 180)
-              }
-              stroke="url(#needle-gradient)"
-              strokeWidth={3}
-              strokeLinecap="round"
-            />
-          </g>
+          {/* Needle (hidden in mystery mode – replaced by ?) */}
+          {!isMystery && (
+            <g filter="url(#needle-shadow)">
+              <motion.line
+                x1={center}
+                y1={center}
+                x2={
+                  center +
+                  (radius - strokeWidth - 10) * Math.cos(((angle - 180) * Math.PI) / 180)
+                }
+                y2={
+                  center +
+                  (radius - strokeWidth - 10) * Math.sin(((angle - 180) * Math.PI) / 180)
+                }
+                stroke="url(#needle-gradient)"
+                strokeWidth={3}
+                strokeLinecap="round"
+              />
+            </g>
+          )}
           <defs>
             <linearGradient id="needle-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#cbd5e1" />
               <stop offset="100%" stopColor="#f8fafc" />
             </linearGradient>
           </defs>
-          {/* Center cap */}
+          {/* Center cap – show ? in mystery mode */}
           <circle
             cx={center}
             cy={center}
@@ -244,23 +250,54 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
             strokeWidth={1.5}
           />
           <circle cx={center} cy={center} r={6} fill="rgba(248,250,252,0.2)" />
+          {isMystery && (
+            <text
+              x={center}
+              y={center}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="fill-violet-300/90 text-sm font-bold pointer-events-none"
+              style={{ fontFamily: "var(--font-heebo), system-ui, sans-serif" }}
+            >
+              ?
+            </text>
+          )}
         </svg>
-        {/* Tooltip bubble below meter – centered, wider */}
+        {/* Tooltip bubble below meter – wrapper width matches SVG so flex centers tooltip */}
         {hoveredDecile != null && (
-          <motion.div
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[280px] max-w-[360px] shadow-lg border border-violet-500/30 z-20 pointer-events-none"
-            role="tooltip"
+          <div
+            className="absolute top-full mt-2 flex justify-center pointer-events-none z-20 w-full"
+            style={{ width: size, left: 0 }}
+            aria-hidden
           >
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-violet-800" aria-hidden />
-            {decileTooltips[hoveredDecile]}
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[280px] max-w-[360px] shadow-lg border border-violet-500/30"
+              role="tooltip"
+            >
+              <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-violet-800" aria-hidden />
+              {decileTooltips[hoveredDecile]}
+            </motion.div>
+          </div>
         )}
       </div>
+      {(compact && isMystery) && (
+        <p className="text-center mt-2 px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-400/25 text-violet-200 text-xs font-medium tracking-wide shadow-sm">
+          המשך כדי לגלות באיזה עשירון אתה נמצא
+        </p>
+      )}
       {!compact && (
-        <p className="text-center text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold mt-1 text-sm tracking-wide">
-          {labels[decile]}
+        <p className="text-center mt-1 text-sm tracking-wide">
+          {isMystery ? (
+            <span className="text-violet-300/90">
+              המשך למלא פרטים כדי לגלות את העשירון שלך
+            </span>
+          ) : (
+            <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold">
+              {labels[decile]}
+            </span>
+          )}
         </p>
       )}
     </div>
