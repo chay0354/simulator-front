@@ -37,4 +37,5 @@ export interface FormState {
   pension_checked: boolean | undefined;
   mortgage_pct: string;
   insurance_pct: string;
+  wants_expert_call: boolean | undefined;
 }

@@ -3,17 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --playful-bg-start: #1e1b4b;
-  --playful-bg-mid: #312e81;
-  --playful-bg-end: #1e3a5f;
-  --playful-card: rgba(255, 255, 255, 0.08);
-  --playful-border: rgba(255, 255, 255, 0.12);
-  --playful-accent: #a78bfa;
-  --playful-accent-warm: #f472b6;
-  --playful-success: #34d399;
-  --playful-gold: #fcd34d;
-  --playful-text: #f8fafc;
-  --playful-muted: #94a3b8;
+  --playful-bg-start: #1e3a4a;
+  --playful-bg-mid: #2d4d66;
+  --playful-bg-end: #0f2535;
+  --playful-card: rgba(255, 255, 255, 0.06);
+  --playful-border: rgba(255, 255, 255, 0.1);
+  --playful-accent: #3C6382;
+  --playful-accent-light: #5C7A94;
+  --playful-muted: #AAB7BF;
+  --playful-text: #f0f5f8;
 }
 
 html {
@@ -22,7 +20,7 @@ html {
 
 body {
   @apply antialiased;
-  background: linear-gradient(165deg, #1e1b4b 0%, #312e81 35%, #1e3a5f 70%, #0f172a 100%);
+  background: linear-gradient(165deg, #1e3a4a 0%, #2d4d66 35%, #1e3a5f 50%, #0f2535 100%);
   background-attachment: fixed;
   min-height: 100vh;
   color: var(--playful-text);
@@ -33,9 +31,9 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(ellipse 100% 60% at 20% 0%, rgba(167, 139, 250, 0.2), transparent 50%),
-    radial-gradient(ellipse 80% 50% at 90% 20%, rgba(244, 114, 182, 0.12), transparent 45%),
-    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(52, 211, 153, 0.08), transparent 40%);
+    radial-gradient(ellipse 100% 60% at 20% 0%, rgba(60, 99, 130, 0.25), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 90% 20%, rgba(188, 204, 216, 0.08), transparent 45%),
+    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(92, 111, 126, 0.1), transparent 40%);
   pointer-events: none;
   z-index: 0;
 }
@@ -56,19 +54,19 @@ body::before {
   .input-glass:focus {
     @apply outline-none;
     border-color: var(--playful-accent);
-    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.25);
+    box-shadow: 0 0 0 4px rgba(60, 99, 130, 0.3);
   }
   .input-glass::placeholder {
     color: rgba(148, 163, 184, 0.6);
   }
 
   .btn-primary {
-    @apply px-8 py-4 rounded-2xl font-bold text-slate-900 transition-all duration-200 hover:scale-105 active:scale-95;
-    background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 50%, #f472b6 100%);
-    box-shadow: 0 10px 30px -5px rgba(167, 139, 250, 0.4);
+    @apply px-8 py-4 rounded-2xl font-bold text-white transition-all duration-200 hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg, #3C6382 0%, #5C7A94 50%, #5C6F7E 100%);
+    box-shadow: 0 10px 30px -5px rgba(60, 99, 130, 0.45);
   }
   .btn-primary:hover {
-    box-shadow: 0 20px 40px -10px rgba(167, 139, 250, 0.5);
+    box-shadow: 0 20px 40px -10px rgba(60, 99, 130, 0.5);
   }
   .btn-primary:disabled {
     @apply opacity-50 cursor-not-allowed hover:scale-100 active:scale-100;
@@ -90,16 +88,16 @@ body::before {
   .choice-card:hover {
     @apply scale-[1.02];
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(167, 139, 250, 0.3);
-    box-shadow: 0 8px 25px -5px rgba(167, 139, 250, 0.15);
+    border-color: rgba(60, 99, 130, 0.4);
+    box-shadow: 0 8px 25px -5px rgba(60, 99, 130, 0.2);
   }
   .choice-card:active {
     @apply scale-[0.98];
   }
   .choice-card.selected {
     border-color: var(--playful-accent);
-    background: rgba(167, 139, 250, 0.15);
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+    background: rgba(60, 99, 130, 0.2);
+    box-shadow: 0 0 0 3px rgba(60, 99, 130, 0.25);
   }
 }
 

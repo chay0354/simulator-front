@@ -27,7 +27,7 @@ export function Screen3Family({ formData, update }: Screen3FamilyProps) {
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-6">השקעות ונכסים פיננסיים</h2>
+      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-barak-200 to-barak-100 mb-6">השקעות ונכסים פיננסיים</h2>
 
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-2">אימייל</label>

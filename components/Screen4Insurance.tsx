@@ -33,7 +33,7 @@ export function Screen4Insurance({ formData, update }: Screen4InsuranceProps) {
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-6">משכנתאות וביטוחים</h2>
+      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-barak-200 to-barak-100 mb-6">משכנתאות וביטוחים</h2>
 
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">

@@ -95,14 +95,13 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
         >
           <defs>
             <linearGradient id="gauge-track" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#7c3aed" />
-              <stop offset="40%" stopColor="#a78bfa" />
-              <stop offset="70%" stopColor="#c084fc" />
-              <stop offset="100%" stopColor="#f472b6" />
+              <stop offset="0%" stopColor="#3C6382" />
+              <stop offset="50%" stopColor="#5C7A94" />
+              <stop offset="100%" stopColor="#BCCCD8" />
             </linearGradient>
             <linearGradient id="gauge-glow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#a78bfa" stopOpacity="0" />
+              <stop offset="0%" stopColor="#5C7A94" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#5C7A94" stopOpacity="0" />
             </linearGradient>
             <filter id="needle-shadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#0f172a" floodOpacity="0.8" />
@@ -256,7 +255,7 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
               y={center}
               textAnchor="middle"
               dominantBaseline="middle"
-              className="fill-violet-300/90 text-sm font-bold pointer-events-none"
+              className="fill-barak-300 text-sm font-bold pointer-events-none"
               style={{ fontFamily: "var(--font-heebo), system-ui, sans-serif" }}
             >
               ?
@@ -273,28 +272,28 @@ export function DecileMeter({ decile, compact }: DecileMeterProps) {
             <motion.div
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[280px] max-w-[360px] shadow-lg border border-violet-500/30"
+              className="px-4 py-2.5 rounded-xl bg-barak-800/95 text-white text-xs font-medium text-center min-w-[280px] max-w-[360px] shadow-lg border border-barak-600/40"
               role="tooltip"
             >
-              <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-violet-800" aria-hidden />
+              <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-barak-800" aria-hidden />
               {decileTooltips[hoveredDecile]}
             </motion.div>
           </div>
         )}
       </div>
       {(compact && isMystery) && (
-        <p className="text-center mt-2 px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-400/25 text-violet-200 text-xs font-medium tracking-wide shadow-sm">
+        <p className="text-center mt-2 px-3 py-1.5 rounded-full bg-barak-700/20 border border-barak-600/30 text-barak-200 text-xs font-medium tracking-wide shadow-sm">
           המשך כדי לגלות באיזה עשירון אתה נמצא
         </p>
       )}
       {!compact && (
         <p className="text-center mt-1 text-sm tracking-wide">
           {isMystery ? (
-            <span className="text-violet-300/90">
+            <span className="text-barak-300">
               המשך למלא פרטים כדי לגלות את העשירון שלך
             </span>
           ) : (
-            <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold">
+            <span className="text-transparent bg-clip-text bg-gradient-to-l from-barak-200 to-barak-100 font-semibold">
               {labels[decile]}
             </span>
           )}

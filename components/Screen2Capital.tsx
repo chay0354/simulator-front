@@ -26,15 +26,14 @@ type Screen2CapitalProps = {
   update: FormUpdateFn;
 };
 
-function useWording(gender: string) {
-  const isFemale = gender === "female";
-  return {
-    your: isFemale ? "שלך" : "שלך",
-  };
-}
-
 export function Screen2Capital({ formData, update }: Screen2CapitalProps) {
-  const wording = useWording(formData.gender);
+  const phoneDigits = (formData.phone || "").replace(/\D/g, "");
+  const phoneValid = phoneDigits.length >= 9 && phoneDigits.length <= 10;
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value.replace(/\D/g, "").slice(0, 10);
+    update({ phone: v });
+  };
 
   return (
     <motion.div
@@ -43,30 +42,34 @@ export function Screen2Capital({ formData, update }: Screen2CapitalProps) {
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 mb-6">
+      <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-barak-200 to-barak-100 mb-6">
         אפיון והון משפחתי
       </h2>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-2">גיל / קבוצת גיל</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">שם מלא</label>
         <input
           type="text"
-          value={formData.age}
-          onChange={(e) => update({ age: e.target.value })}
+          value={formData.full_name}
+          onChange={(e) => update({ full_name: e.target.value })}
           className="input-glass"
-          placeholder="גיל או קבוצת גיל (למשל 35 או 30–40)"
+          placeholder="הכנס את שמך המלא"
         />
       </motion.div>
 
       <motion.div variants={item}>
-        <label className="block text-sm font-semibold text-slate-300 mb-2">מקום מגורים</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">טלפון</label>
         <input
-          type="text"
-          value={formData.residence}
-          onChange={(e) => update({ residence: e.target.value })}
+          type="tel"
+          inputMode="numeric"
+          value={formData.phone}
+          onChange={handlePhoneChange}
           className="input-glass"
-          placeholder="עיר / יישוב"
+          placeholder="מס׳ טלפון (9–10 ספרות)"
         />
+        {formData.phone && !phoneValid && (
+          <p className="text-barak-400 text-xs mt-1">נא להזין 9–10 ספרות בלבד</p>
+        )}
       </motion.div>
 
       <motion.div variants={item}>
@@ -87,7 +90,7 @@ export function Screen2Capital({ formData, update }: Screen2CapitalProps) {
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">
           <LabelWithTooltip
-            label={"האם ההכנסה המשפחתית " + wording.your + ":"}
+            label="האם ההכנסה המשפחתית ברוטו:"
             tooltip={TOOLTIP_INCOME}
           />
         </label>
@@ -112,7 +115,7 @@ export function Screen2Capital({ formData, update }: Screen2CapitalProps) {
       <motion.div variants={item}>
         <label className="block text-sm font-semibold text-slate-300 mb-3">
           <LabelWithTooltip
-            label="האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם מצאת לו ייעוד או טרם השקעת אותו? ברשותי הכנסה פנויה של:"
+            label="האם ברשותך הון עצמי בפיקדונות הבנקים או בקרן כספית שטרם מצאת לו ייעוד או טרם השקעת אותו? ברשותי סכום פנוי של:"
             tooltip={TOOLTIP_CAPITAL}
           />
         </label>

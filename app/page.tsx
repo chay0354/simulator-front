@@ -45,6 +45,7 @@ const initialFormState: FormState = {
   pension_checked: undefined,
   mortgage_pct: "",
   insurance_pct: "",
+  wants_expert_call: undefined,
 };
 
 export default function Home() {
@@ -174,12 +175,14 @@ export default function Home() {
 
   const canProceed = () => {
     if (step === 1) {
-      return Boolean(formData.gender && formData.employment && formData.full_name?.trim() && formData.phone?.trim());
+      return Boolean(formData.gender && formData.employment && formData.age?.trim() && formData.residence?.trim());
     }
     if (step === 2) {
+      const phoneDigits = (formData.phone || "").replace(/\D/g, "");
+      const phoneOk = phoneDigits.length >= 9 && phoneDigits.length <= 10;
       return Boolean(
-        formData.age?.trim() &&
-          formData.residence?.trim() &&
+        formData.full_name?.trim() &&
+          phoneOk &&
           formData.household_size?.trim() &&
           formData.family_income &&
           formData.own_capital
@@ -220,13 +223,27 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <span className="text-4xl sm:text-5xl mb-3 block animate-float" role="img" aria-hidden>🏠</span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-violet-300 via-fuchsia-200 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">
+          <a
+            href="https://www.barak-fin.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mb-3"
+          >
+            <img src="/unnamed.png" alt="ברק פיננסים" className="h-14 sm:h-16 w-auto object-contain" />
+          </a>
+          <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-barak-200 via-barak-100 to-barak-50 bg-clip-text text-transparent drop-shadow-sm">
             סימולטור משפחות
           </h1>
-          <p className="text-slate-400 mt-2 text-sm sm:text-base">
-            בואו נגלה ביחד באיזה עשירון אתם – כמה שאלות קצרות וזהו ✨
-          </p>
+          {!showResults && (
+            <>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-200 mt-4">
+                איפה אתם ממוקמים בסרגל העושר הפיננסי?
+              </h2>
+              <p className="text-slate-300 mt-2 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+                רוב המשפחות מנהלות את הכסף שלהן ב&quot;טייס אוטומטי&quot;. סימולטור העושר של ברק פיננסים ייצר עבורכם ב-2 דקות תמונת מצב מדויקת: היכן אתם עומדים ביחס לאוכלוסייה, איזה פוטנציאל מתפספס, ומהן האסטרטגיות המעשיות להשבחת ההון שלכם.
+              </p>
+            </>
+          )}
         </motion.header>
 
         {!showResults && (
@@ -237,7 +254,7 @@ export default function Home() {
           >
             {currentDecile != null && (
               <div className="flex justify-end mb-3">
-                <span className="text-violet-300 font-medium text-sm bg-violet-500/20 px-3 py-1 rounded-full">
+                <span className="text-barak-200 font-medium text-sm bg-barak-700/30 px-3 py-1 rounded-full">
                   הערכה: עשירון {currentDecile}
                 </span>
               </div>
@@ -247,7 +264,7 @@ export default function Home() {
                 <motion.div
                   key={s}
                   className={`h-3 flex-1 max-w-[56px] rounded-full transition-all duration-300 ${
-                    s <= step ? "bg-gradient-to-l from-violet-500 to-fuchsia-400 shadow-lg shadow-violet-500/30" : "bg-white/15"
+                    s <= step ? "bg-gradient-to-l from-barak-700 to-barak-600 shadow-lg shadow-barak-700/30" : "bg-white/15"
                   }`}
                   initial={false}
                   animate={{
@@ -258,50 +275,35 @@ export default function Home() {
               ))}
             </div>
             <p className="text-center text-slate-500 text-xs">שלב {step} מתוך {totalSteps}</p>
+            <p className="text-center text-barak-200 text-sm font-medium mt-1 mb-2">
+              נכון לעכשיו מדד העושר שלכם הוא:
+            </p>
             <DecileMeter decile={currentDecile ?? null} compact />
           </motion.div>
         )}
 
         {!showResults && (
-          <div className="relative rounded-2xl overflow-hidden border border-violet-400/25 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/5 to-transparent px-5 py-4 shadow-inner mb-6">
-            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-violet-400/60 to-fuchsia-400/40 rounded-r" aria-hidden />
+          <div className="relative rounded-2xl overflow-hidden border border-barak-600/30 bg-gradient-to-br from-barak-700/15 via-barak-600/10 to-transparent px-5 py-4 shadow-inner mb-6">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-barak-600 to-barak-500 rounded-r" aria-hidden />
             <div className="flex gap-3">
-              <span className="shrink-0 w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg" aria-hidden>
+              <span className="shrink-0 w-9 h-9 rounded-xl bg-barak-700/25 flex items-center justify-center text-lg" aria-hidden>
                 📊
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-violet-300 uppercase tracking-wide mb-1.5">
-                  מבוסס על נתונים אמיתיים
+                <p className="text-xs font-semibold text-barak-300 uppercase tracking-wide mb-1.5">
+                  מבוסס על נתונים מדויקים
                 </p>
                 <p className="text-slate-200 text-sm leading-relaxed">
-                  מושווה לדאטה של{" "}
+                  מושווה לנתונים רשמיים של הלשכה המרכזית לסטטיסטיקה ולמקורות נוספים: ברק פיננסים, דו&quot;חות CBS, מחקרי אדווה וטאוב, Credit Suisse. תקבל הערכה ל{" "}
                   <span className="relative inline-block group">
                     <span
-                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl bg-violet-800/95 text-white text-xs font-medium whitespace-nowrap shadow-lg border border-violet-500/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-10"
-                      role="tooltip"
-                    >
-                      ברק פיננסים היא בין חברות ההשקעות המובילות בישראל!
-                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-violet-800" aria-hidden />
-                    </span>
-                    <a
-                      href="https://www.barak-fin.com/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-fuchsia-200 font-semibold underline underline-offset-2 hover:text-fuchsia-100 transition-colors"
-                    >
-                      ברק פיננסים
-                    </a>
-                  </span>{" "}
-                  ומקורות נוספים. תקבל הערכה ל{" "}
-                  <span className="relative inline-block group">
-                    <span
-                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2.5 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-center min-w-[260px] max-w-[320px] shadow-lg border border-violet-500/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-10"
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2.5 rounded-xl bg-barak-900/95 text-white text-xs font-medium text-center min-w-[260px] max-w-[320px] shadow-lg border border-barak-600/40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-10"
                       role="tooltip"
                     >
                       עשירון משקי בית מחלק את משקי הבית בישראל ל־10 קבוצות לפי הכנסה ונכסים – מעשירון 1 (הנמוך) עד עשירון 10 (הגבוה). כאן תקבל הערכה לאיזה עשירון אתה שייך.
-                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-violet-800" aria-hidden />
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-barak-900" aria-hidden />
                     </span>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-200 to-fuchsia-200 font-semibold cursor-help">עשירון משקי</span>
+                    <span className="text-barak-200 font-semibold cursor-help">עשירון משקי</span>
                   </span>{" "}
                   שלך.
                 </p>
@@ -326,6 +328,7 @@ export default function Home() {
                 maxScore={decileResult.maxScore}
                 distribution={decileResult.distribution}
                 onBack={goBack}
+                update={update}
               />
             </motion.div>
           ) : (
@@ -363,14 +366,6 @@ export default function Home() {
                     </button>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={saveAndGoToResults}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-violet-500/25 bg-violet-500/5 px-4 py-2.5 text-sm font-medium text-violet-200 transition-all duration-200 hover:border-violet-400/40 hover:bg-violet-500/15 hover:text-violet-100"
-                >
-                  <span aria-hidden>📄</span>
-                  רוצה כבר דוח
-                </button>
               </div>
             </motion.div>
           )}

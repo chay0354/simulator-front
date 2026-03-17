@@ -28,7 +28,7 @@ export function LabelWithTooltip({ label, tooltip, className = "", id }: LabelWi
     <span ref={wrapRef} className={`relative inline-flex items-center gap-1.5 ${className}`}>
       <span id={id}>{label}</span>
       <span
-        className="shrink-0 w-4 h-4 rounded-full bg-violet-500/30 text-violet-200 flex items-center justify-center text-[10px] font-bold cursor-help hover:bg-violet-500/50 transition-colors touch-manipulation"
+        className="shrink-0 w-4 h-4 rounded-full bg-barak-700/40 text-barak-200 flex items-center justify-center text-[10px] font-bold cursor-help hover:bg-barak-700/60 transition-colors touch-manipulation"
         onMouseEnter={() => setShow(true)}
         onMouseLeave={() => setShow(false)}
         onFocus={() => setShow(true)}
@@ -46,10 +46,10 @@ export function LabelWithTooltip({ label, tooltip, className = "", id }: LabelWi
         <span
           id={id ? `tooltip-${id}` : undefined}
           role="tooltip"
-          className="absolute bottom-full right-0 mb-1.5 px-3 py-2 rounded-xl bg-violet-800/95 text-white text-xs font-medium text-right max-w-[280px] shadow-lg border border-violet-500/30 z-30 pointer-events-none whitespace-normal"
+          className="absolute bottom-full right-0 mb-1.5 px-3 py-2 rounded-xl bg-barak-800/95 text-white text-xs font-medium text-right max-w-[280px] shadow-lg border border-barak-600/40 z-30 pointer-events-none whitespace-normal"
         >
           {tooltip}
-          <span className="absolute top-full right-4 border-[6px] border-transparent border-t-violet-800" aria-hidden />
+          <span className="absolute top-full right-4 border-[6px] border-transparent border-t-barak-800" aria-hidden />
         </span>
       )}
     </span>

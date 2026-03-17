@@ -12,6 +12,19 @@ const config: Config = {
         sans: ["var(--font-heebo)", "system-ui", "sans-serif"],
       },
       colors: {
+        barak: {
+          50: "#F0F5F8",
+          100: "#E8EEF2",
+          200: "#BCCCD8",
+          300: "#AAB7BF",
+          400: "#8A9BA3",
+          500: "#7F8C8D",
+          600: "#5C6F7E",
+          700: "#3C6382",
+          800: "#2d4d66",
+          900: "#1e3a4a",
+          950: "#0f2535",
+        },
         brand: {
           50: "#f0f9ff",
           100: "#e0f2fe",
@@ -60,8 +73,8 @@ const config: Config = {
         "4xl": "2rem",
       },
       boxShadow: {
-        playful: "0 25px 50px -12px rgba(167, 139, 250, 0.2)",
-        "playful-lg": "0 35px 60px -15px rgba(167, 139, 250, 0.25)",
+        playful: "0 25px 50px -12px rgba(60, 99, 130, 0.25)",
+        "playful-lg": "0 35px 60px -15px rgba(60, 99, 130, 0.3)",
       },
     },
   },
